@@ -45,9 +45,11 @@ export default function TopVotersTable({ proposal }: TopVotersTableProps) {
     ...DEFAULT_SORTING,
   ]);
 
-  const { data: topVoters = [], isLoading: isLoadingVotes } = useProposalVotes(
-    proposal?.publicKey,
-  );
+  const {
+    data: topVoters = [],
+    isLoading: isLoadingVotes,
+    isFetching: isFetchingVotes,
+  } = useProposalVotes(proposal?.publicKey);
 
   const filteredData = React.useMemo(() => {
     const searchTerm = searchValue.trim().toLowerCase();
@@ -146,7 +148,7 @@ export default function TopVotersTable({ proposal }: TopVotersTableProps) {
             aria-label="Download top voters"
             onClick={handleDownload}
             disabled={
-              isLoadingVotes ||
+              isFetchingVotes ||
               table.getPrePaginationRowModel().rows.length === 0
             }
           >
