@@ -13,8 +13,19 @@ const HEADERS = [
   "Vote Timestamp",
 ];
 
+const FORMULA_PREFIX = /^[=+\-@\uFF1D\uFF0B\uFF0D\uFF20]/u;
+const CONTROL_PREFIX = /^[\t\r\n\0]/u;
+
+function neutralizeSpreadsheetFormula(text: string): string {
+  const startsWithFormula = FORMULA_PREFIX.test(text.trimStart());
+  return startsWithFormula || CONTROL_PREFIX.test(text) ? `'${text}` : text;
+}
+
 function escapeCsvCell(value: string | number): string {
-  const text = String(value);
+  const text =
+    typeof value === "string"
+      ? neutralizeSpreadsheetFormula(value)
+      : String(value);
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
